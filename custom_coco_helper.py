@@ -18,10 +18,14 @@ import copy
 import time
 import os
 
+from pycococreatortools import pycococreatortools 
+
 
 # Mock up Instance class used to create Instances with just one detected object
 class MyInstance:
-    def __init__(self, pred_classes=None, pred_boxes=None, pred_masks=None, scores=None):
+    def __init__(self, img_id, seg_id, pred_classes=None, pred_boxes=None, pred_masks=None, scores=None):
+        self.img_id = img_id
+        self.seg_id = seg_id
         self.pred_classes = pred_classes
         self.pred_boxes = pred_boxes
         self.pred_masks = pred_masks
@@ -35,8 +39,48 @@ class MyInstance:
         if s == 'pred_masks':
             return self.pred_masks is not None
         if s == 'scores':
-            return self.scores is not None        
+            return self.scores is not None
         
+    def coco_annotation(self, new_class=None):
+        if not new_class:
+            true_class = self.pred_classes[0].tolist()
+        else:
+            true_class = new_clas
+        category_info = {'id': true_class, 'is_crowd': 0}
+        
+        annotation_info = pycococreatortools.create_annotation_info(
+            self.seg_id,
+            self.img_id,
+            category_info,
+            self.pred_masks[0],
+            tolerance=2,
+            bounding_box=self.pred_boxes[0]
+        )
+        
+        return annotation_info
+        
+    @clas_method
+    def create_instances(cls, img_id, next_seg_id, instances, keep_cats=[]):
+        # loop through every detected objects in the result and display them one by one
+        my_instances = []
+        for i in range(len(outputs["instances"].pred_classes)):
+            # Only keep specified categories
+            pred_classes = outputs["instances"].pred_classes[i:i+1].to("cpu")
+            if pred_classes[0] not in keep_ids:
+                continue
+
+            my_instance = MyInstance(
+                img_id = img_id,
+                seg_id = start_seg_id,
+                pred_classes = pred_classes,
+                pred_boxes = outputs["instances"].pred_boxes[i:i+1].to("cpu"),
+                pred_masks = outputs["instances"].pred_masks[i:i+1].to("cpu"),
+                scores = outputs["instances"].scores[i:i+1].to("cpu"),
+            )
+            
+            my_instances.append(my_instance)
+            next_seg_id += 1
+        return next_seg_id, my_instances
 
 class MyPredictor:
     # Constants
