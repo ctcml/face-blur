@@ -128,6 +128,13 @@ class MyPredictor:
     def inference(self, im):
         outputs = self.predictor(im)
         return outputs
+            
+    def visualize(self, im, instances):
+        # Visualize the image with object masks
+        v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]), scale=1.2)
+        v = v.draw_instance_predictions(instances)
+        plt.figure(figsize = (200,20))
+        plt.imshow(cv2.cvtColor(v.get_image()[:, :, ::-1], cv2.COLOR_BGR2RGB))
         
 
 class CustomCOCOFormatter:
@@ -166,10 +173,3 @@ class CustomCOCOFormatter:
         with open(file_path, 'w') as f:
             json.dump(to_write, f)
     
-        
-def visualize(im, instances):
-    # Visualize the image with object masks
-    v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]), scale=1.2)
-    v = v.draw_instance_predictions(instances)
-    plt.figure(figsize = (200,20))
-    plt.imshow(cv2.cvtColor(v.get_image()[:, :, ::-1], cv2.COLOR_BGR2RGB))
