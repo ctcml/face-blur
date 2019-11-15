@@ -31,6 +31,7 @@ class MyInstance:
         self.pred_masks = pred_masks
         self.scores = scores
         
+    # Check whether the specified inference result exists in the instance
     def has(self, s):
         if s == 'pred_classes':
             return self.pred_classes is not None
@@ -41,6 +42,7 @@ class MyInstance:
         if s == 'scores':
             return self.scores is not None
         
+    # Return annotation in coco format
     def coco_annotation(self, new_class=None):
         if not new_class:
             true_class = self.pred_classes[0].tolist()
@@ -59,6 +61,7 @@ class MyInstance:
         
         return annotation_info
         
+    # Create a list of MyInstances from the Detectron Instances
     @clas_method
     def create_instances(cls, img_id, next_seg_id, instances, keep_cats=[]):
         # loop through every detected objects in the result and display them one by one
@@ -82,6 +85,7 @@ class MyInstance:
             next_seg_id += 1
         return next_seg_id, my_instances
 
+# Wrapper for running inference
 class MyPredictor:
     # Constants
     DATA_DIR = 'data'
