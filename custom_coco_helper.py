@@ -80,14 +80,14 @@ class MyInstance:
     def create_instances(cls, img_id, next_seg_id, img_paths, instances, keep_cats=[]):
         # loop through every detected objects in the result and display them one by one
         my_instances = []
-        for i in range(len(outputs["instances"].pred_classes)):
+        for i in range(len(instances["instances"].pred_classes)):
             # Only keep specified categories
-            pred_classes = outputs["instances"].pred_classes[i:i+1].to("cpu")
+            pred_classes = instances["instances"].pred_classes[i:i+1].to("cpu")
             if pred_classes[0] not in keep_ids:
                 continue
 
             # img meta
-            img_size = [outputs["instances"].image_size[1], outputs["instances"].image_size[0]]
+            img_size = [instances["instances"].image_size[1], instances["instances"].image_size[0]]
             img_path = img_paths[i]
                 
             my_instance = MyInstance(
@@ -96,9 +96,9 @@ class MyInstance:
                 img_size = img_size,
                 img_path = img_path,
                 pred_classes = pred_classes,
-                pred_boxes = outputs["instances"].pred_boxes[i:i+1].to("cpu"),
-                pred_masks = outputs["instances"].pred_masks[i:i+1].to("cpu"),
-                scores = outputs["instances"].scores[i:i+1].to("cpu"),
+                pred_boxes = instances["instances"].pred_boxes[i:i+1].to("cpu"),
+                pred_masks = instances["instances"].pred_masks[i:i+1].to("cpu"),
+                scores = instances["instances"].scores[i:i+1].to("cpu"),
             )
             
             my_instances.append(my_instance)
@@ -118,9 +118,9 @@ class MyPredictor:
         self.cfg.merge_from_file('./detectron_configs/Cityscapes/cascade_mask_rcnn_R_50_FPN_1x.yaml')
         self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
         self.cfg.MODEL.WEIGHTS = "https://dl.fbaipublicfiles.com/detectron2/Misc/cascade_mask_rcnn_R_50_FPN_1x/138602847/model_final_e9d89b.pkl"
-        self.predictor = DefaultPredictor(cfg)
+        self.predictor = DefaultPredictor(self.cfg)
 
-        self.img_paths = [os.path.join(IMAGE_PATH, img_name) for img_name in os.listdir(IMAGE_PATH)]
+        self.img_paths = [os.path.join(self.IMAGE_PATH, img_name) for img_name in os.listdir(self.IMAGE_PATH)]
         
     def read_im(self, img_id):
         # Images might be corrupted during downloads, or formats might be png
