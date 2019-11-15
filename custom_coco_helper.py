@@ -129,8 +129,9 @@ class MyPredictor:
         outputs = self.predictor(im)
         return outputs
             
-    def visualize(self, im, instances):
+    def visualize(self, img_path, instances):
         # Visualize the image with object masks
+        im = cv2.imread(img_path)
         v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]), scale=1.2)
         v = v.draw_instance_predictions(instances)
         plt.figure(figsize = (200,20))
