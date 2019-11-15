@@ -106,12 +106,7 @@ class MyInstance:
 
 # Wrapper for running inference
 class MyPredictor:
-    # Constants
-    DATA_DIR = 'data'
-    DOWNLOAD_DIR = 'raw'
-    IMAGE_PATH = os.path.join(os.getcwd(), DATA_DIR, DOWNLOAD_DIR)
-
-    def __init__(self):
+    def __init__(self, img_folder):
         # Using cascade mask rcnn as the predictor
         self.cfg = get_cfg()
         self.cfg.merge_from_file('./detectron_configs/Cityscapes/cascade_mask_rcnn_R_50_FPN_1x.yaml')
@@ -119,7 +114,7 @@ class MyPredictor:
         self.cfg.MODEL.WEIGHTS = "https://dl.fbaipublicfiles.com/detectron2/Misc/cascade_mask_rcnn_R_50_FPN_1x/138602847/model_final_e9d89b.pkl"
         self.predictor = DefaultPredictor(self.cfg)
 
-        self.img_paths = [os.path.join(self.IMAGE_PATH, img_name) for img_name in os.listdir(self.IMAGE_PATH)]
+        self.img_paths = [os.path.join(img_folder, img_name) for img_name in os.listdir(img_folder)]
         
     def read_im(self, img_id):
         # Images might be corrupted during downloads, or formats might be png
