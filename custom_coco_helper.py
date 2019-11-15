@@ -76,7 +76,7 @@ class MyInstance:
         return img_info
         
     # Create a list of MyInstances from the Detectron Instances
-    @clas_method
+    @classmethod
     def create_instances(cls, img_id, next_seg_id, img_paths, instances, keep_cats=[]):
         # loop through every detected objects in the result and display them one by one
         my_instances = []
@@ -129,7 +129,7 @@ class MyPredictor:
             im = cv2.imread(self.img_paths[0])
         except Exception as e:
             print(e)
-    return im
+        return im
 
     def inference(self, im):
         outputs = self.predictor(im)
