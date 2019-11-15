@@ -77,28 +77,28 @@ class MyInstance:
         
     # Create a list of MyInstances from the Detectron Instances
     @classmethod
-    def create_instances(cls, img_id, next_seg_id, img_paths, instances, keep_cats=[]):
+    def create_instances(cls, img_id, next_seg_id, img_paths, outputs, keep_cats=[]):
         # loop through every detected objects in the result and display them one by one
         my_instances = []
-        for i in range(len(instances["instances"].pred_classes)):
+        for i in range(len(outputs["instances"].pred_classes)):
             # Only keep specified categories
-            pred_classes = instances["instances"].pred_classes[i:i+1].to("cpu")
-            if pred_classes[0] not in keep_ids:
+            pred_classes = outputs["instances"].pred_classes[i:i+1].to("cpu")
+            if pred_classes[0] not in keep_cats:
                 continue
 
             # img meta
-            img_size = [instances["instances"].image_size[1], instances["instances"].image_size[0]]
+            img_size = [outputs["instances"].image_size[1], outputs["instances"].image_size[0]]
             img_path = img_paths[i]
                 
             my_instance = MyInstance(
                 img_id = img_id,
-                seg_id = start_seg_id,
+                seg_id = next_seg_id,
                 img_size = img_size,
                 img_path = img_path,
                 pred_classes = pred_classes,
-                pred_boxes = instances["instances"].pred_boxes[i:i+1].to("cpu"),
-                pred_masks = instances["instances"].pred_masks[i:i+1].to("cpu"),
-                scores = instances["instances"].scores[i:i+1].to("cpu"),
+                pred_boxes = outputs["instances"].pred_boxes[i:i+1].to("cpu"),
+                pred_masks = outputs["instances"].pred_masks[i:i+1].to("cpu"),
+                scores = outputs["instances"].scores[i:i+1].to("cpu"),
             )
             
             my_instances.append(my_instance)
