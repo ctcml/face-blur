@@ -17,6 +17,8 @@ from detectron2.data import MetadataCatalog
 import copy
 import time
 import os
+import datetime
+import json
 
 from pycococreatortools import pycococreatortools 
 
@@ -115,7 +117,42 @@ class MyPredictor:
         outputs = self.predictor(im)
         return outputs
         
+
+class CustomCOCOFormatter:
+    info = {
+        "description": "",
+        "url": "",
+        "version": "",
+        "year": datetime.datetime.now().year,
+        "contributor": "",
+        "date_created": datetime.datetime.now().isoformat(' ')
+    }
+    
+    licenses = [{
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License",
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/"
+    }]
+    
+    def __init__(self, categories, annotations, info={}):
+        for k, v in info.items():
+            self.info[k] = v
+            
+        self.categories = categories
+        self.annotations = annotations
+    
+    def export(self, file_path):
+        to_write = {
+            "info": self.info,
+            "licenses": self.licenses,
+            "categories": self.categories,
+            "images": [],
+            "annotations": self.annotations
+        }
         
+        with open(file_path, 'w') as f:
+            json.dump(to_write, f)
+    
         
 def visualize(im, instances):
     # Visualize the image with object masks
