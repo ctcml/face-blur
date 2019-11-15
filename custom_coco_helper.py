@@ -58,9 +58,9 @@ class MyInstance:
             self.seg_id,
             self.img_id,
             category_info,
-            self.pred_masks[0],
+            self.pred_masks[0].numpy(),
             tolerance=2,
-            bounding_box=self.pred_boxes[0]
+            bounding_box=self.pred_boxes[0].tensor[0].numpy()
         )
         
         return annotation_info
