@@ -126,7 +126,7 @@ class MyPredictor:
         # Images might be corrupted during downloads, or formats might be png
         # Does not happen very often, just skip
         try:
-            im = cv2.imread(self.img_paths[0])
+            im = cv2.imread(self.img_paths[img_id])
         except Exception as e:
             print(e)
         return im
