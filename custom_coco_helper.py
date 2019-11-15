@@ -25,9 +25,11 @@ from pycococreatortools import pycococreatortools
 
 # Mock up Instance class used to create Instances with just one detected object
 class MyInstance:
-    def __init__(self, img_id, seg_id, pred_classes=None, pred_boxes=None, pred_masks=None, scores=None):
+    def __init__(self, img_id, seg_id, img_size, img_path, pred_classes=None, pred_boxes=None, pred_masks=None, scores=None):
         self.img_id = img_id
         self.seg_id = seg_id
+        self.img_size = img_size
+        self.img_path = img_path
         self.pred_classes = pred_classes
         self.pred_boxes = pred_boxes
         self.pred_masks = pred_masks
@@ -62,10 +64,20 @@ class MyInstance:
         )
         
         return annotation_info
+    
+    # Return coco format img info
+    def coco_img_info(self):
+        img_info = pycococreatortools.create_image_info(
+            self.img_id,
+            self.img_path,
+            self.img_size
+        )
+        
+        return img_info
         
     # Create a list of MyInstances from the Detectron Instances
     @clas_method
-    def create_instances(cls, img_id, next_seg_id, instances, keep_cats=[]):
+    def create_instances(cls, img_id, next_seg_id, img_paths, instances, keep_cats=[]):
         # loop through every detected objects in the result and display them one by one
         my_instances = []
         for i in range(len(outputs["instances"].pred_classes)):
@@ -74,9 +86,15 @@ class MyInstance:
             if pred_classes[0] not in keep_ids:
                 continue
 
+            # img meta
+            img_size = [outputs["instances"].image_size[1], outputs["instances"].image_size[0]]
+            img_path = img_paths[i]
+                
             my_instance = MyInstance(
                 img_id = img_id,
                 seg_id = start_seg_id,
+                img_size = img_size,
+                img_path = img_path,
                 pred_classes = pred_classes,
                 pred_boxes = outputs["instances"].pred_boxes[i:i+1].to("cpu"),
                 pred_masks = outputs["instances"].pred_masks[i:i+1].to("cpu"),
@@ -134,19 +152,20 @@ class CustomCOCOFormatter:
         "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/"
     }]
     
-    def __init__(self, categories, annotations, info={}):
+    def __init__(self, categories, annotations, img_info, info={}):
         for k, v in info.items():
             self.info[k] = v
             
         self.categories = categories
         self.annotations = annotations
+        self.img_info = img_info
     
     def export(self, file_path):
         to_write = {
             "info": self.info,
             "licenses": self.licenses,
             "categories": self.categories,
-            "images": [],
+            "images": self.img_info,
             "annotations": self.annotations
         }
         
