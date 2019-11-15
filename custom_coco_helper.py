@@ -75,9 +75,9 @@ class MyInstance:
         
         return img_info
         
-    # Create a list of MyInstances from the Detectron Instances
+    # Create a list of MyInstances from the Detectron Instances of one image
     @classmethod
-    def create_instances(cls, img_id, next_seg_id, img_paths, outputs, keep_cats=[]):
+    def create_instances(cls, img_id, next_seg_id, img_path, outputs, keep_cats=[]):
         # loop through every detected objects in the result and display them one by one
         my_instances = []
         for i in range(len(outputs["instances"].pred_classes)):
@@ -88,7 +88,6 @@ class MyInstance:
 
             # img meta
             img_size = [outputs["instances"].image_size[1], outputs["instances"].image_size[0]]
-            img_path = img_paths[i]
                 
             my_instance = MyInstance(
                 img_id = img_id,
