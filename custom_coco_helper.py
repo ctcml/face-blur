@@ -120,22 +120,22 @@ class MyPredictor:
     def get_img_path(self, img_id):
         return self.img_paths[img_id]
         
-    def read_im(self, img_id):
+    def read_img(self, img_id):
         # Images might be corrupted during downloads, or formats might be png
         # Does not happen very often, just skip
         try:
-            im = cv2.imread(self.img_paths[img_id])
+            img = cv2.imread(self.img_paths[img_id])
         except Exception as e:
             print(e)
-        return im
+        return img
 
-    def inference(self, im):
-        outputs = self.predictor(im)
+    def inference(self, img):
+        outputs = self.predictor(img)
         return outputs
             
-    def visualize(self, im, instances):
+    def visualize(self, img, instances):
         # Visualize the image with object masks
-        v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]), scale=1.2)
+        v = Visualizer(img[:, :, ::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]), scale=1.2)
         v = v.draw_instance_predictions(instances)
         plt.figure(figsize = (200,20))
         plt.imshow(cv2.cvtColor(v.get_image()[:, :, ::-1], cv2.COLOR_BGR2RGB))
