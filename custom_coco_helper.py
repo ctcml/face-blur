@@ -116,6 +116,10 @@ class MyPredictor:
 
         self.img_paths = [os.path.join(img_folder, img_name) for img_name in os.listdir(img_folder)]
         
+    # Getter for img path
+    def get_img_path(self, img_id):
+        return self.img_paths[img_id]
+        
     def read_im(self, img_id):
         # Images might be corrupted during downloads, or formats might be png
         # Does not happen very often, just skip
