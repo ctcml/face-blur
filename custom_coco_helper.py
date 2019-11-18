@@ -51,7 +51,7 @@ class MyInstance:
         if not new_class:
             true_class = self.pred_classes[0].tolist()
         else:
-            true_class = new_clas
+            true_class = new_class
         category_info = {'id': true_class, 'is_crowd': 0}
         
         annotation_info = pycococreatortools.create_annotation_info(
