@@ -137,8 +137,7 @@ class MyPredictor:
         # Visualize the image with object masks
         v = Visualizer(img[:, :, ::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]), scale=1.2)
         v = v.draw_instance_predictions(instances)
-        plt.figure(figsize = (200,20))
-        plt.imshow(cv2.cvtColor(v.get_image()[:, :, ::-1], cv2.COLOR_BGR2RGB))
+        return v.get_image()
         
 
 class CustomCOCOFormatter:
