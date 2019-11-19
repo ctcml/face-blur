@@ -119,6 +119,10 @@ class MyPredictor:
     # Getter for img path
     def get_img_path(self, img_id):
         return self.img_paths[img_id]
+    
+    # Getter for number of imgs
+    def get_num_imgs(self):
+        return len(self.img_paths)
         
     def read_img(self, img_id):
         # Images might be corrupted during downloads, or formats might be png
